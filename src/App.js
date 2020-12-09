@@ -17,23 +17,27 @@ class App extends Component {
 
   componentDidMount() {
     onkeydown = this.onKeyDown;
-    setInterval(this.moveSnake, 100);
+    this.timerId = setInterval(this.moveSnake, 100);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerId);
   }
 
   onKeyDown = (e) => {
 
     e = e || window.event;
-    // setPrevDirection(direction);
-    if(e.keyCode == '38') {
+
+    if(e.keyCode === 38) {
       this.setState({direction: 'up', prevDirection: this.state.direction});
     }
-    else if(e.keyCode == '40') {
+    else if(e.keyCode === 40) {
       this.setState({direction: 'down', prevDirection: this.state.direction});
     }
-    else if(e.keyCode == '37') {
+    else if(e.keyCode === 37) {
       this.setState({direction: 'left', prevDirection: this.state.direction});
     }
-    else if(e.keyCode == '39') {
+    else if(e.keyCode === 39) {
       this.setState({direction: 'right', prevDirection: this.state.direction});
     }
   }
@@ -67,7 +71,7 @@ class App extends Component {
     }
 
     this.setState({snake: newSnake});
-    if(this.obstacleHit()) console.log('hit obstacle');
+    if(this.obstacleHit()) this.setState({play: false});
   }
 
   obstacleHit = () => {
@@ -95,14 +99,23 @@ class App extends Component {
     this.setState({food: [x, y]});
   }
 
+  game = () => {
+    const { snake, food } = this.state;
+    return (
+      <React.Fragment>
+          <Snake snakePos={snake}/>
+          <Food foodPos={food}/>
+      </React.Fragment>
+    )
+  }
+
   render() {
 
-    const { snake, food } = this.state;
+    const { play } = this.state;
 
     return (
       <div id='board'>
-        <Snake snakePos={snake}/>
-        <Food foodPos={food}/>
+        {play ? this.game() : <div>Cannot Play</div>}
       </div>
     )
   }
