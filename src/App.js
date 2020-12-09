@@ -17,7 +17,7 @@ class App extends Component {
 
   componentDidMount() {
     onkeydown = this.onKeyDown;
-    setInterval(this.moveSnake, 500);
+    setInterval(this.moveSnake, 100);
   }
 
   onKeyDown = (e) => {
@@ -63,9 +63,9 @@ class App extends Component {
       else if(prevDirection === 'up' || prevDirection === 'down') {
         newSnake.push({x: newSnake[newSnake.length-1], y: newSnake[newSnake.length-1].y + (prevDirection === 'up' ? 2 : -2)});
       }
+      this.randomFood();
     }
 
-    // setSnake(newSnake);
     this.setState({snake: newSnake});
     if(this.obstacleHit()) console.log('hit obstacle');
   }
@@ -86,6 +86,13 @@ class App extends Component {
 
     let head = snake[0];
     return snake.slice(1).filter((e) => {return e.x === head.x && e.y === head.y}).length > 0;
+  }
+
+  randomFood = () => {
+    let x = Math.floor(Math.random() * 50) * 2;
+    let y = Math.floor(Math.random() * 50) * 2;
+
+    this.setState({food: [x, y]});
   }
 
   render() {
