@@ -1,6 +1,9 @@
+.container {
+  padding-top: 50px;
+  padding-left: 50px;
+}
+
 #board {
-  margin-left: 10px;
-  margin-top: 10px;
   position: relative;
   height: 600px;
   width: 600px;
@@ -23,4 +26,16 @@
   background-color: chartreuse;
   height: 2%;
   width: 2%;
+}
+
+.result {
+  text-align: center;
+}
+
+#score {
+  text-align: center;
+}
+
+.score-container {
+  width: 600px;
 }

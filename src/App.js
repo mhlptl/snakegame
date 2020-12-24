@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import './App.css';
 import Food from './components/Food';
+import Result from './components/Result';
 import Snake from './components/Snake';
 
 class App extends Component {
@@ -11,7 +12,8 @@ class App extends Component {
       food: [40,10],
       direction: 'down',
       prevDirection: '',
-      play: true
+      play: true,
+      score: 0
     }
   }
 
@@ -67,11 +69,15 @@ class App extends Component {
       else if(prevDirection === 'up' || prevDirection === 'down') {
         newSnake.push({x: newSnake[newSnake.length-1], y: newSnake[newSnake.length-1].y + (prevDirection === 'up' ? 2 : -2)});
       }
+      this.setState({score: this.state.score + 1});
       this.randomFood();
     }
 
     this.setState({snake: newSnake});
-    if(this.obstacleHit()) this.setState({play: false});
+    if(this.obstacleHit()) {
+      this.setState({play: false});
+      clearInterval(this.timerId);
+    }
   }
 
   obstacleHit = () => {
@@ -79,9 +85,8 @@ class App extends Component {
 
     let x = snake[0].x;
     let y = snake[0].y;
-    let board = document.getElementById('board');
 
-    if(x < 0 || y < 0 || x > board.clientWidth || y > board.clientHeight || this.hitSelf()) return true;
+    if(x < 0 || y < 0 || x >= 100 || y >= 100 || this.hitSelf()) return true;
     return false;
   }
 
@@ -109,13 +114,29 @@ class App extends Component {
     )
   }
 
+  tryAgain = () => {
+    this.setState({
+      snake: [{x:0, y:0}],
+      food: [40, 10],
+      play: true,
+      direction: 'down',
+      score: 0
+    });
+    this.timerId = setInterval(this.moveSnake, 100);
+  }
+
   render() {
 
-    const { play } = this.state;
+    const { play, score } = this.state;
 
     return (
-      <div id='board'>
-        {play ? this.game() : <div>Cannot Play</div>}
+      <div className='container'>
+        <div className='score-container'>
+          <h1 id='score'>Score: {score * 10}</h1>
+        </div>
+        <div id='board'>
+          {play ? this.game() : <Result result={'Sorry! Better luck next time!'} handleClick={() => this.tryAgain} />}
+        </div>
       </div>
     )
   }
