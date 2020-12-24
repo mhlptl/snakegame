@@ -39,3 +39,12 @@
 .score-container {
   width: 600px;
 }
+
+.start-button {
+  text-align: center;
+}
+
+.start-container {
+  text-align: center;
+  margin-top: 300px;
+}

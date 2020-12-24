@@ -3,6 +3,7 @@ import './App.css';
 import Food from './components/Food';
 import Result from './components/Result';
 import Snake from './components/Snake';
+import Start from './components/Start';
 
 class App extends Component {
   constructor(props) {
@@ -12,14 +13,15 @@ class App extends Component {
       food: [40,10],
       direction: 'down',
       prevDirection: '',
-      play: true,
-      score: 0
+      play: false,
+      score: 0,
+      start: true
     }
   }
 
   componentDidMount() {
     onkeydown = this.onKeyDown;
-    this.timerId = setInterval(this.moveSnake, 100);
+    // this.timerId = setInterval(this.moveSnake, 100);
   }
 
   componentWillUnmount() {
@@ -125,9 +127,17 @@ class App extends Component {
     this.timerId = setInterval(this.moveSnake, 100);
   }
 
+  handleClick = () => {
+    this.setState({
+      start: false,
+      play: true
+    });
+    this.timerId = setInterval(this.moveSnake, 100);
+  }
+
   render() {
 
-    const { play, score } = this.state;
+    const { play, score, start } = this.state;
 
     return (
       <div className='container'>
@@ -135,7 +145,7 @@ class App extends Component {
           <h1 id='score'>Score: {score * 10}</h1>
         </div>
         <div id='board'>
-          {play ? this.game() : <Result result={'Sorry! Better luck next time!'} handleClick={() => this.tryAgain} />}
+          {start ? <Start handleClick={() => this.handleClick}/> : play ? this.game() : <Result result={'Sorry! Better luck next time!'} handleClick={() => this.tryAgain} />}
         </div>
       </div>
     )
