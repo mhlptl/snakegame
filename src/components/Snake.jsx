@@ -3,7 +3,10 @@ import React from 'react';
 function Snake(props) {
     return (
         props.snakePos.map((loc, i) => {
-            return (<div key={i} className='snake' style={{left:`${loc.x}%`, top: `${loc.y}%`}}></div>)
+            let x = loc.x;
+            let y = loc.y;
+            // console.log(loc);
+            return (<div key={i} className='snake' style={{left:`${x}%`, top: `${y}%`}}></div>)
         })
     )
 }

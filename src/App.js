@@ -12,7 +12,6 @@ class App extends Component {
       snake: [{x:0, y:0}],
       food: [40,10],
       direction: 'down',
-      prevDirection: '',
       play: false,
       score: 0,
       start: true
@@ -21,7 +20,6 @@ class App extends Component {
 
   componentDidMount() {
     onkeydown = this.onKeyDown;
-    // this.timerId = setInterval(this.moveSnake, 100);
   }
 
   componentWillUnmount() {
@@ -31,24 +29,24 @@ class App extends Component {
   onKeyDown = (e) => {
 
     e = e || window.event;
+    const { direction } = this.state;
 
-    if(e.keyCode === 38) {
-      this.setState({direction: 'up', prevDirection: this.state.direction});
+    if(e.keyCode === 38 && direction !== 'down') {
+      this.setState({direction: 'up'});
     }
-    else if(e.keyCode === 40) {
-      this.setState({direction: 'down', prevDirection: this.state.direction});
+    else if(e.keyCode === 40 && direction !== 'up') {
+      this.setState({direction: 'down'});
     }
-    else if(e.keyCode === 37) {
-      this.setState({direction: 'left', prevDirection: this.state.direction});
+    else if(e.keyCode === 37 && direction !== 'right') {
+      this.setState({direction: 'left'});
     }
-    else if(e.keyCode === 39) {
-      this.setState({direction: 'right', prevDirection: this.state.direction});
+    else if(e.keyCode === 39 && direction !== 'left') {
+      this.setState({direction: 'right'});
     }
   }
 
   moveSnake = () => {
-    // console.log('here');
-    const { snake, direction, food, prevDirection } = this.state;
+    const { snake, direction, food} = this.state;
     let newSnake = snake;
     if(direction === 'up') {
       newSnake.unshift({x: snake[0].x, y: snake[0].y - 2});
@@ -65,12 +63,7 @@ class App extends Component {
     newSnake.pop();
 
     if(newSnake[0].x === food[0] && newSnake[0].y === food[1]) {
-      if(prevDirection === 'left' || prevDirection === 'right') {
-        newSnake.push({x: newSnake[newSnake.length-1] + (prevDirection === 'left' ? -2 : 2), y: newSnake[newSnake.length-1].y});
-      }
-      else if(prevDirection === 'up' || prevDirection === 'down') {
-        newSnake.push({x: newSnake[newSnake.length-1], y: newSnake[newSnake.length-1].y + (prevDirection === 'up' ? 2 : -2)});
-      }
+      this.addToTail(newSnake, direction);
       this.setState({score: this.state.score + 1});
       this.randomFood();
     }
@@ -79,6 +72,25 @@ class App extends Component {
     if(this.obstacleHit()) {
       this.setState({play: false});
       clearInterval(this.timerId);
+    }
+  }
+
+  addToTail = (snake, direction) => {
+    if(snake.length === 1) {
+      if(direction === 'left' || direction === 'right') {
+        snake.push({x: snake[snake.length-1].x + (direction === 'left' ? 2 : -2), y: snake[snake.length-1].y});
+      }
+      else {
+        snake.push({x: snake[snake.length-1].x, y: snake[snake.length-1].y + (direction === 'down' ? -2 : 2)});
+      }
+    }
+    else {
+      if(snake[snake.length-1].x === snake[snake.length-2].x) {
+        snake.push({x: snake[snake.length-1].x, y: snake[snake.length-1].y + (direction === 'down' ? -2 : 2)});
+      }
+      else if(snake[snake.length-1].y === snake[snake.length-2].y) {
+        snake.push({x: snake[snake.length-1].x + (direction === 'left' ? 2 : -2), y: snake[snake.length-1].y});
+      }
     }
   }
 
